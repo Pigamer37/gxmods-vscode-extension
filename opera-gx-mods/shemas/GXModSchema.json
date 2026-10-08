@@ -1,0 +1,812 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Opera GX Mod Manifest",
+  "description": "JSON Schema for an Opera GX Mod manifest.json file.",
+  "type": "object",
+  "properties": {
+    "author": {
+      "type": "string",
+      "description": "The name of the developer or team."
+    },
+    "update_url": {
+      "type": "string",
+      "description": "URL to check for updates to the mod."
+    },
+    "name": {
+      "type": "string",
+      "description": "The name of the mod."
+    },
+    "description": {
+      "type": "string",
+      "description": "A brief description of the mod."
+    },
+    "developer": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the developer or team."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ]
+    },
+    "icons": {
+      "type": "object",
+      "description": "Icons for the mod. Keys are typically resolutions (e.g. '512').",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "string",
+          "description": "Path to the icon file."
+        }
+      },
+      "minProperties": 1,
+      "additionalProperties": false
+    },
+    "manifest_version": {
+      "type": "integer",
+      "description": "The manifest version standard being used (only use 3).",
+      "default": 3,
+      "const": 3
+    },
+    "version": {
+      "type": "string",
+      "description": "The version of the mod (e.g., '1.0.0')."
+    },
+    "mod": {
+      "type": "object",
+      "properties": {
+        "license": {
+          "type": "string",
+          "description": "Path to the license text file."
+        },
+        "schema_version": {
+          "type": "integer",
+          "description": "Schema version of the mod payload. (2 has more features)",
+          "default": 2,
+          "minimum": 1,
+          "maximum": 2
+        },
+        "tags": {
+          "type": "array",
+          "description": "Tags for categorizing the mod.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "payload": {
+          "type": "object",
+          "description": "The main content and configuration of the mod."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "schema_version": {
+                "const": 1
+              }
+            },
+            "required": [
+              "schema_version"
+            ]
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "properties": {
+                  "background_music": {
+                    "type": "array",
+                    "markdownDescription": "List of background music tracks. This doesn't playlist songs, instead it uses [vertical remixing](https://gamemaker.io/en/blog/compose-video-game-music)",
+                    "description": "List of background music tracks. This doesn't playlist songs, instead it uses vertical remixing",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1
+                  },
+                  "browser_sounds": {
+                    "$ref": "#/$defs/browserSoundsObject"
+                  },
+                  "keyboard_sounds": {
+                    "$ref": "#/$defs/keyboardSoundsObject"
+                  },
+                  "theme": {
+                    "type": "object",
+                    "description": "Color themes for the browser UI.",
+                    "properties": {
+                      "dark": {
+                        "$ref": "#/$defs/themeObject"
+                      },
+                      "light": {
+                        "$ref": "#/$defs/themeObject"
+                      }
+                    }
+                  },
+                  "wallpaper": {
+                    "type": "object",
+                    "description": "Wallpapers for new tab pages.",
+                    "properties": {
+                      "dark": {
+                        "$ref": "#/$defs/wallpaperObject"
+                      },
+                      "light": {
+                        "$ref": "#/$defs/wallpaperObject"
+                      }
+                    }
+                  },
+                  "page_styles": {
+                    "type": "array",
+                    "description": "Custom CSS injections for specific sites.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "css": {
+                          "type": "array",
+                          "description": "Paths to .css files to apply.",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "matches": {
+                          "type": "array",
+                          "description": "URL match patterns.",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "css",
+                        "matches"
+                      ]
+                    }
+                  },
+                  "shaders": {
+                    "type": "object",
+                    "description": "Background shaders for the browser.",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string"
+                        },
+                        "animation": {
+                          "type": "object",
+                          "properties": {
+                            "duration": {
+                              "type": "number"
+                            },
+                            "steps": {
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "duration",
+                            "steps"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "path"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false,
+                "minProperties": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "schema_version": {
+                "const": 2
+              }
+            },
+            "required": [
+              "schema_version"
+            ]
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "properties": {
+                  "background_music": {
+                    "type": "array",
+                    "markdownDescription": "List of background music tracks. This doesn't playlist songs, instead it uses [vertical remixing](https://gamemaker.io/en/blog/compose-video-game-music)",
+                    "description": "List of background music tracks. This doesn't playlist songs, instead it uses vertical remixing",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Unique identifier for the music track."
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Name of the music track."
+                        },
+                        "tracks": {
+                          "$ref": "#/$defs/soundArray"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "tracks"
+                      ]
+                    },
+                    "minItems": 1
+                  },
+                  "browser_sounds": {
+                    "type": "array",
+                    "description": "Array of browser sound definitions",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Unique identifier for the sound set."
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Name of the sound set."
+                        },
+                        "sounds": {
+                          "$ref": "#/$defs/browserSoundsObject"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "sounds"
+                      ]
+                    },
+                    "minItems": 1
+                  },
+                  "keyboard_sounds": {
+                    "type": "array",
+                    "description": "Array of keyboard sound definitions",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Unique identifier for the sound set."
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Name of the sound set."
+                        },
+                        "sounds": {
+                          "$ref": "#/$defs/keyboardSoundsObject"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "sounds"
+                      ]
+                    },
+                    "minItems": 1
+                  },
+                  "theme": {
+                    "type": "array",
+                    "description": "Array of color themes for the browser UI.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Unique identifier for the theme."
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Name of the theme."
+                        },
+                        "dark": {
+                          "$ref": "#/$defs/themeObject"
+                        },
+                        "light": {
+                          "$ref": "#/$defs/themeObject"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name"
+                      ],
+                      "minProperties": 3,
+                      "maxProperties": 4
+                    },
+                    "minItems": 1
+                  },
+                  "wallpaper": {
+                    "type": "array",
+                    "description": "Array of wallpapers for new tab pages.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Unique identifier for the wallpaper."
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Name of the wallpaper."
+                        },
+                        "dark": {
+                          "$ref": "#/$defs/wallpaperObject"
+                        },
+                        "light": {
+                          "$ref": "#/$defs/wallpaperObject"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name"
+                      ],
+                      "minProperties": 3,
+                      "maxProperties": 4
+                    },
+                    "minItems": 1
+                  },
+                  "page_styles": {
+                    "type": "array",
+                    "description": "Custom CSS injections for specific sites.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "css": {
+                          "type": "array",
+                          "description": "Paths to .css files to apply.",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "matches": {
+                          "type": "array",
+                          "description": "URL match patterns.",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "css",
+                        "matches"
+                      ]
+                    }
+                  },
+                  "shaders": {
+                    "type": "object",
+                    "description": "Background shaders for the browser.",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string"
+                        },
+                        "animation": {
+                          "type": "object",
+                          "properties": {
+                            "duration": {
+                              "type": "number"
+                            },
+                            "steps": {
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "duration",
+                            "steps"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "path"
+                      ]
+                    }
+                  },
+                  "cursors": {
+                    "type": "array",
+                    "description": "Array of cursor packs",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Unique identifier for the cursor pack."
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Name of the cursor pack."
+                        },
+                        "items": {
+                          "type": "array",
+                          "description": "Array of cursors",
+                          "items": {
+                            "$ref": "#/$defs/cursorObject"
+                          },
+                          "minItems": 1
+                        },
+                        "preview": {
+                          "type": "string",
+                          "description": "Path to a preview image of the cursor pack."
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "items"
+                      ]
+                    },
+                    "minItems": 1
+                  },
+                  "app_icon": {
+                    "type": "array",
+                    "description": "An array of custom Opera GX app icons.",
+                    "items": {
+                      "$ref": "#/$defs/mediaObject"
+                    },
+                    "minItems": 1,
+                    "deprecated": true
+                  },
+                  "splash_screen": {
+                    "type": "array",
+                    "description": "An array of splash initial animations for Opera GX startup.",
+                    "items": {
+                      "$ref": "#/$defs/mediaObject"
+                    },
+                    "minItems": 1,
+                    "deprecated": true
+                  },
+                  "mobile_image_overrides": {
+                    "type": "array",
+                    "description": "Array of images/videos for the mobile app.",
+                    "items": {
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Unique identifier for the image override pack."
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Name for the image override pack."
+                        },
+                        "images": {
+                          "type": "object",
+                          "properties": {
+                            "start_page_logo": {
+                              "type": "string",
+                              "description": "Image/gif that appears on the home screen, over the search bar."
+                            }
+                          }
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "id",
+                        "name",
+                        "images"
+                      ]
+                    },
+                    "minItems": 1,
+                    "deprecated": true
+                  },
+                  "fonts": {
+                    "type": "array",
+                    "description": "An array of splash initial animations for Opera GX startup.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Unique identifier for the image override pack."
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Name for the image override pack."
+                        },
+                        "header": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "description": "The font name"
+                            },
+                            "variants": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "path": {
+                                    "type": "string",
+                                    "description": "Path to a font variant file (.ttf for example)"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "path"
+                                ]
+                              },
+                              "minItems": 1
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "name",
+                            "variants"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "id",
+                        "name",
+                        "header"
+                      ]
+                    },
+                    "minItems": 1,
+                    "deprecated": true
+                  }
+                },
+                "$comment": "Here the 'deprecated' property is used to dnote the property exists, is valid, but is restricted to official mods by Opera GX.",
+                "additionalProperties": false,
+                "minProperties": 1
+              }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false,
+      "required": [
+        "payload",
+        "schema_version"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "manifest_version",
+    "version",
+    "mod"
+  ],
+  "$defs": {
+    "soundArray": {
+      "type": "array",
+      "description": "An array containing file paths to sound files.",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "hslColor": {
+      "type": "object",
+      "description": "An HSL color representation.",
+      "properties": {
+        "h": {
+          "type": "integer",
+          "description": "Hue value (0-360).",
+          "minimum": 0,
+          "maximum": 360
+        },
+        "s": {
+          "type": "integer",
+          "description": "Saturation value (0-100).",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "l": {
+          "type": "integer",
+          "description": "Lightness value (0-100).",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "h",
+        "s",
+        "l"
+      ]
+    },
+    "themeObject": {
+      "type": "object",
+      "properties": {
+        "gx_accent": {
+          "$ref": "#/$defs/hslColor"
+        },
+        "gx_secondary_base": {
+          "$ref": "#/$defs/hslColor"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "gx_accent",
+        "gx_secondary_base"
+      ]
+    },
+    "wallpaperObject": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "string",
+          "description": "Path to the image or video file."
+        },
+        "image_mobile": {
+          "type": "string",
+          "description": "Path to the image or video file for mobile devices."
+        },
+        "speeddial_position": {
+          "type": "string",
+          "description": "The position of the speed dial."
+        },
+        "ui_settings": {
+          "type": "object",
+          "description": "UI settings for the wallpaper."
+        },
+        "first_frame": {
+          "type": "string",
+          "description": "If the image is a video, an image representing the first frame."
+        },
+        "text_color": {
+          "type": "string",
+          "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
+          "description": "Hex code for the text color."
+        },
+        "text_shadow": {
+          "type": "string",
+          "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
+          "description": "Hex code for the text shadow color."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "image",
+        "text_color",
+        "text_shadow"
+      ]
+    },
+    "browserSoundsObject": {
+      "type": "object",
+      "properties": {
+        "CLICK": {
+          "$ref": "#/$defs/soundArray"
+        },
+        "FEATURE_SWITCH_OFF": {
+          "$ref": "#/$defs/soundArray"
+        },
+        "FEATURE_SWITCH_ON": {
+          "$ref": "#/$defs/soundArray"
+        },
+        "HOVER": {
+          "$ref": "#/$defs/soundArray"
+        },
+        "HOVER_UP": {
+          "$ref": "#/$defs/soundArray"
+        },
+        "IMPORTANT_CLICK": {
+          "$ref": "#/$defs/soundArray"
+        },
+        "LEVEL_UPGRADE": {
+          "$ref": "#/$defs/soundArray"
+        },
+        "LIMITER_OFF": {
+          "$ref": "#/$defs/soundArray"
+        },
+        "LIMITER_ON": {
+          "$ref": "#/$defs/soundArray"
+        },
+        "SWITCH_TOGGLE": {
+          "$ref": "#/$defs/soundArray"
+        },
+        "TAB_CLOSE": {
+          "$ref": "#/$defs/soundArray"
+        },
+        "TAB_INSERT": {
+          "$ref": "#/$defs/soundArray"
+        },
+        "TAB_SLASH": {
+          "$ref": "#/$defs/soundArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "keyboardSoundsObject": {
+      "type": "object",
+      "properties": {
+        "TYPING_BACKSPACE": {
+          "$ref": "#/$defs/soundArray"
+        },
+        "TYPING_ENTER": {
+          "$ref": "#/$defs/soundArray"
+        },
+        "TYPING_LETTER": {
+          "$ref": "#/$defs/soundArray"
+        },
+        "TYPING_SPACE": {
+          "$ref": "#/$defs/soundArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "cursorObject": {
+      "type": "object",
+      "description": "An object describing a cursor.",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path to the cursor file (.cur/.ani)."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of the cursor (e.g., 'POINTER', 'GRABBING').",
+          "enum": [
+            "MOVE",
+            "POINTER",
+            "GRAB",
+            "GRABBING",
+            "NORTH_RESIZE",
+            "SOUTH_RESIZE",
+            "EAST_RESIZE",
+            "WEST_RESIZE",
+            "NORTH_WEST_SOUTH_EAST_RESIZE",
+            "NORTH_WEST_RESIZE",
+            "SOUTH_EAST_RESIZE",
+            "NORTH_EAST_SOUTH_WEST_RESIZE",
+            "NORTH_EAST_RESIZE",
+            "SOUTH_WEST_RESIZE",
+            "NORTH_SOUTH_RESIZE",
+            "EAST_WEST_RESIZE",
+            "ROW_RESIZE",
+            "COLUMN_RESIZE",
+            "HAND",
+            "WAIT",
+            "PROGRESS",
+            "HELP",
+            "I_BEAM",
+            "CROSS",
+            "CELL",
+            "NO_DROP",
+            "NOT_ALLOWED"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "type"
+      ]
+    },
+    "mediaObject": {
+      "type": "object",
+      "description": "A media resource (image, video, etc)",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the media resource."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name for the resource."
+        },
+        "path": {
+          "type": "string",
+          "description": "The path of the resource."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "path"
+      ]
+    }
+  }
+}

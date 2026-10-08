@@ -1,0 +1,51 @@
+{
+  "name": "opera-gx-mods",
+  "displayName": "Opera GX Mods",
+  "description": "A VSCode extension to facilitate development of Opera GX Mods",
+  "icon": "./media/GX.png",
+  "galleryBanner": {
+    "color": "#FFFFFF",
+    "theme": "dark"
+  },
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.140.0"
+  },
+  "keywords": [
+    "json",
+    "jsonschema",
+    "validation",
+    "operagx",
+    "gxmods"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pigamer37/gxmods-vscode-extension.git"
+  },
+  "bugs": "https://github.com/pigamer37/gxmods-vscode-extension/issues",
+  "categories": [
+    "Snippets",
+    "Other"
+  ],
+  "contributes": {
+    "jsonValidation": [
+      {
+        "fileMatch": "manifest.json",
+        "url": "./shemas/GXModSchema.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "json",
+        "path": "./snippets/snippets.json"
+      }
+    ]
+  },
+  "scripts": {
+    "package": "vsce package"
+  },
+  "overrides": {
+    "diff": "^8.0.4",
+    "serialize-javascript": "^7.0.6"
+  }
+}
